@@ -11,7 +11,7 @@ import java.util.List;
 public class TrilhaDBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "trilhas.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static final String TABLE_TRILHA = "trilha";
     private static final String COL_ID = "id";
@@ -30,7 +30,17 @@ public class TrilhaDBHelper extends SQLiteOpenHelper {
     private static final String COL_TIMESTAMP = "timestamp";
 
     public TrilhaDBHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this(context, DATABASE_NAME);
+    }
+
+    TrilhaDBHelper(Context context, String databaseName) {
+        super(context, databaseName, null, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+        db.setForeignKeyConstraintsEnabled(true);
     }
 
     @Override
@@ -53,13 +63,21 @@ public class TrilhaDBHelper extends SQLiteOpenHelper {
                 COL_TIMESTAMP + " TEXT NOT NULL, " +
                 "FOREIGN KEY(" + COL_TRILHA_ID + ") REFERENCES " + TABLE_TRILHA + "(" + COL_ID + ") ON DELETE CASCADE)";
         db.execSQL(createPonto);
+        createIndexes(db);
+    }
+
+    private void createIndexes(SQLiteDatabase db) {
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_trilha_data_inicio ON " +
+                TABLE_TRILHA + "(" + COL_DATA_INICIO + ")");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_ponto_trilha_id_timestamp ON " +
+                TABLE_PONTO + "(" + COL_TRILHA_ID + ", " + COL_TIMESTAMP + ")");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PONTO);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRILHA);
-        onCreate(db);
+        if (oldVersion < 2) {
+            createIndexes(db);
+        }
     }
 
     public long inserirTrilha(Trilha trilha) {
