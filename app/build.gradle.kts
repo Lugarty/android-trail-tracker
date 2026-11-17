@@ -1,9 +1,11 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
 }
 
 val localPropertiesFile = rootProject.file("local.properties")
-val localProperties = java.util.Properties()
+val localProperties = Properties()
 if (localPropertiesFile.isFile) {
     localPropertiesFile.inputStream().use { localProperties.load(it) }
 }
@@ -51,4 +53,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    androidTestImplementation("androidx.test:core:1.7.0")
 }
