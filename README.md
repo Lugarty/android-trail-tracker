@@ -50,9 +50,7 @@ The repository contains Android Studio starter test files under `app/src/test/` 
 ## Current Limitations
 
 - The current database upgrade path recreates tables instead of applying incremental migrations.
-- There is no cloud synchronization or user authentication.
 - The Maps API key must be configured locally.
-- The package namespace is still the original project namespace, `com.example.atividaden2`.
 
 ## Project Status and License
 
