@@ -28,7 +28,11 @@ Android Trail Tracker is a Java application that records location points during 
 1. Install Android Studio and open this repository.
 2. Allow Gradle to sync the project.
 3. Create a Google Maps API key with the Maps SDK for Android enabled.
-4. Replace the `YOUR_GOOGLE_MAPS_API_KEY` placeholder in `app/src/main/AndroidManifest.xml` with your local key. Do not commit a real key.
+4. Add the key to the root `local.properties` file:
+   ```properties
+   MAPS_API_KEY=your_key_here
+   ```
+   This file is ignored by Git. Do not commit a real key; restrict it to the Android app and Maps SDK for Android.
 5. Run the app on an emulator with Google Play services or on a compatible Android device.
 
 The project includes the Gradle wrapper (`gradlew` and `gradlew.bat`).
