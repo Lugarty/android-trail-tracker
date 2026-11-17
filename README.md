@@ -1,201 +1,63 @@
 # Android Trail Tracker
 
-Aplicação Android em **Java** para registrar, armazenar e visualizar trilhas geográficas usando GPS, Google Maps e SQLite.
+> An Android app for recording and reviewing GPS trails with Google Maps and local storage.
 
-O projeto combina coleta de localização em tempo real com persistência local estruturada em duas entidades: a trilha e os pontos geográficos pertencentes a ela.
+## Overview
 
-## O que este projeto demonstra
+Android Trail Tracker is a Java application that records location points during a trail, stores them locally, and displays saved routes on a map. A trail and its points are stored as related records in SQLite.
 
-- desenvolvimento Android com Java;
-- integração com **Google Maps SDK**;
-- uso do **Fused Location Provider**;
-- atualização periódica de localização;
-- representação de coordenadas com `LatLng`;
-- persistência local com **SQLite**;
-- relacionamento entre trilhas e pontos geográficos;
-- operações CRUD;
-- navegação entre Activities;
-- configuração de mapa normal/satélite;
-- separação entre camada de interface e acesso a dados.
+## Features
 
-## Fluxo principal
+- Record location updates with the Fused Location Provider
+- Display recorded routes with the Google Maps SDK
+- Store trails and their location points in SQLite
+- Review, rename, and delete saved trails
+- Show distance, duration, and speed information
+- Switch between map display modes
 
-```text
-GPS / Fused Location Provider
-           |
-           v
-RegistrarTrilhaActivity
-           |
-           +--> GoogleMap / LatLng
-           |
-           +--> métricas da trilha
-           |
-           v
-TrilhaDBHelper
-     |             |
-     v             v
-  trilha      ponto_trilha
-     |             |
-     +---- 1:N ----+
-```
+## Tech Stack
 
-## Funcionalidades
+- Java and Android
+- Google Maps SDK
+- Fused Location Provider
+- SQLite
+- Android Views, Material Components, and Gradle
 
-### Registro de trilha
+## Getting Started
 
-Durante o registro, a aplicação recebe atualizações de localização e usa os pontos para acompanhar o percurso.
+1. Install Android Studio and open this repository.
+2. Allow Gradle to sync the project.
+3. Create a Google Maps API key with the Maps SDK for Android enabled.
+4. Replace the `YOUR_GOOGLE_MAPS_API_KEY` placeholder in `app/src/main/AndroidManifest.xml` with your local key. Do not commit a real key.
+5. Run the app on an emulator with Google Play services or on a compatible Android device.
 
-### Visualização em mapa
+The project includes the Gradle wrapper (`gradlew` and `gradlew.bat`).
 
-Os pontos salvos podem ser reconstruídos e exibidos posteriormente no Google Maps.
+## Permissions
 
-### Métricas
+The app requests fine and coarse location permissions. Trail recording depends on the user granting location access and enabling device location services.
 
-A estrutura da trilha armazena informações como:
+## Data Model
 
-- início e fim;
-- velocidade máxima;
-- velocidade média;
-- distância total.
+- `Trilha` stores trail metadata such as name, start and end times, speed, and distance.
+- `PontoTrilha` stores latitude, longitude, and timestamp values associated with a trail.
+- `TrilhaDBHelper` manages the SQLite database and the one-to-many relationship between trails and points.
 
-### Gerenciamento
+## Tests
 
-É possível:
+The repository contains Android Studio starter test files under `app/src/test/` and `app/src/androidTest/`. Project-specific automated test coverage is not yet documented.
 
-- listar trilhas salvas;
-- alterar o nome;
-- excluir uma trilha;
-- excluir todos os registros;
-- abrir uma trilha específica para visualização.
+## Current Limitations
 
-## Persistência
+- The current database upgrade path recreates tables instead of applying incremental migrations.
+- There is no cloud synchronization or user authentication.
+- The Maps API key must be configured locally.
+- The package namespace is still the original project namespace, `com.example.atividaden2`.
 
-A classe `TrilhaDBHelper` utiliza `SQLiteOpenHelper` e cria duas tabelas.
+## Project Status and License
 
-### `trilha`
+This is a personal academic project, not a commercial product. No license has been specified.
 
-Armazena os dados gerais do percurso.
+## Author
 
-Campos principais:
-
-- `id`;
-- `nome`;
-- `data_inicio`;
-- `data_fim`;
-- `velocidade_maxima`;
-- `velocidade_media`;
-- `distancia_total`.
-
-### `ponto_trilha`
-
-Armazena cada ponto coletado durante o percurso.
-
-Campos principais:
-
-- `id`;
-- `trilha_id`;
-- `latitude`;
-- `longitude`;
-- `timestamp`.
-
-O banco modela um relacionamento **1:N** entre trilha e pontos por meio de `trilha_id`.
-
-## Estrutura principal
-
-```text
-app/src/main/java/com/example/atividaden2/
-├── MainActivity.java
-├── activities/
-│   ├── ConfigActivity.java
-│   ├── ConsultarTrilhasActivity.java
-│   ├── RegistrarTrilhaActivity.java
-│   └── VisualizarTrilhaActivity.java
-└── database/
-    ├── Trilha.java
-    ├── PontoTrilha.java
-    └── TrilhaDBHelper.java
-```
-
-## Tecnologias
-
-| Área | Tecnologia |
-|---|---|
-| Linguagem | Java |
-| Plataforma | Android |
-| Mapas | Google Maps SDK |
-| Localização | Fused Location Provider |
-| Persistência | SQLite |
-| UI | Android Views / Material |
-| Build | Gradle |
-
-## Segurança da API
-
-A chave do Google Maps **não está versionada** no repositório.
-
-No `AndroidManifest.xml` existe apenas o placeholder:
-
-```xml
-<meta-data
-    android:name="com.google.android.geo.API_KEY"
-    android:value="SUA_CHAVE_AQUI" />
-```
-
-Para executar o projeto, gere uma chave no Google Cloud Console e substitua o placeholder localmente.
-
-## Como executar
-
-1. Clone o repositório:
-
-```bash
-git clone https://github.com/Lugarty/android-trail-tracker.git
-```
-
-2. Abra o projeto no Android Studio.
-3. Aguarde a sincronização do Gradle.
-4. Habilite o Maps SDK for Android em um projeto do Google Cloud.
-5. Configure sua chave no `AndroidManifest.xml`.
-6. Execute em dispositivo físico ou emulador com Google Play Services.
-
-## Permissões
-
-A aplicação solicita:
-
-- `ACCESS_FINE_LOCATION`;
-- `ACCESS_COARSE_LOCATION`.
-
-O comportamento completo de rastreamento depende da autorização de localização concedida pelo usuário.
-
-## Decisões técnicas
-
-### SQLite local
-
-O projeto mantém os dados offline e dispensa backend para armazenar o histórico de trilhas.
-
-### Separação entre trilha e pontos
-
-Em vez de armazenar o percurso como um único campo, cada ponto geográfico possui sua própria linha associada à trilha. Isso simplifica a reconstrução da rota no mapa.
-
-### Fused Location Provider
-
-A coleta usa a API de localização do Google Play Services, que abstrai múltiplas fontes de localização do dispositivo.
-
-## Limitações atuais
-
-- banco local na versão 1; `onUpgrade` recria as tabelas em vez de realizar migração incremental;
-- não há sincronização em nuvem;
-- não há autenticação de usuário;
-- a chave do Google Maps precisa ser configurada manualmente;
-- não há suíte de testes automatizados no repositório.
-
-## Próximos passos
-
-- adicionar migrações de banco sem perda de dados;
-- criar testes para regras de persistência e cálculo;
-- exportar trilhas em formato interoperável, como GPX;
-- melhorar tratamento de permissões e estados de GPS;
-- adicionar camada de repositório para desacoplar Activities do SQLite.
-
-## Autor
-
-**Anísio Oliveira Albuquerque Filho**  
-GitHub: [@Lugarty](https://github.com/Lugarty)
+[Anísio Oliveira (@Lugarty)](https://github.com/Lugarty)
