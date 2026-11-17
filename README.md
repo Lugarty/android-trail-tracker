@@ -49,12 +49,14 @@ The app requests fine and coarse location permissions. Trail recording depends o
 
 ## Tests
 
-The repository contains Android Studio starter test files under `app/src/test/` and `app/src/androidTest/`. Project-specific automated test coverage is not yet documented.
+The repository contains Android Studio starter tests under `app/src/test/` and an instrumented database migration test under `app/src/androidTest/`. The migration test upgrades a version 1 database and checks that trails and points are preserved, lookup indexes are created, and deleting a trail removes its points.
+
+Run the instrumented tests on a connected Android device or emulator with `./gradlew connectedDebugAndroidTest` (or `gradlew.bat connectedDebugAndroidTest` on Windows).
 
 ## Current Limitations
 
-- The current database upgrade path recreates tables instead of applying incremental migrations.
 - The Maps API key must be configured locally.
+- Route recording and map interactions do not yet have automated end-to-end coverage.
 
 ## Project Status and License
 
